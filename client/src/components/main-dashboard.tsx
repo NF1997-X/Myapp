@@ -140,7 +140,7 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
 
   return (
     <motion.div 
-      className="h-full bg-background"
+      className="h-full bg-black flex flex-col"
       initial={{ scale: 1, opacity: 1 }}
       animate={
         isZooming 
@@ -152,62 +152,56 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
       transition={{ duration: 0.4, ease: "easeInOut" }}
     >
       {/* Header */}
-      <div className="px-6 py-4 border-b border-border">
+      <div className="px-6 py-6 border-b border-white/10">
         <div className="flex items-center justify-between">
-          <h1 className="text-lg font-medium text-foreground">Multi-App Launcher</h1>
-          <motion.button
-            className="w-8 h-8 rounded-full bg-card border border-border flex items-center justify-center"
-            onClick={onLogout}
-            data-testid="button-logout"
-            whileTap={{ scale: 0.95 }}
-            whileHover={{ scale: 1.05 }}
-          >
+          <h1 className="text-xl font-bold text-white tracking-tight">App Launcher</h1>
+          <div className="flex items-center gap-2">
             <motion.button
               onClick={() => setShowSettings(true)}
-              className="glass w-10 h-10 rounded-full flex items-center justify-center cursor-pointer"
+              className="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer bg-white/10 backdrop-blur-xl border border-white/20"
               whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.15)" }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              <Settings className="text-muted-foreground" size={16} />
+              <Settings className="text-white" size={18} />
             </motion.button>
             <motion.button
               onClick={onLogout}
-              className="glass w-10 h-10 rounded-full flex items-center justify-center cursor-pointer"
+              className="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer bg-white/10 backdrop-blur-xl border border-white/20"
               whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.15)" }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              <Power className="text-muted-foreground" size={16} />
+              <Power className="text-white" size={18} />
             </motion.button>
+          </div>
         </div>
       </div>
 
       {/* App Grid - 5 columns */}
-      <div className="p-6 mt-12">
-        <div className="grid grid-cols-5 gap-4 max-w-4xl mx-auto">
+      <div className="flex-1 overflow-y-auto px-6 py-10">
+        <div className="grid grid-cols-5 gap-5 max-w-6xl mx-auto">
           {apps.map((app, index) => (
             <motion.div
               key={app.id}
-              className="app-icon rounded-2xl p-4 flex flex-col items-center justify-center gap-3 cursor-pointer text-center"
+              className="rounded-3xl p-5 flex flex-col items-center justify-center gap-3 cursor-pointer text-center bg-white/10 backdrop-blur-xl hover:bg-white/15 transition-colors shadow-lg shadow-black/50"
               onClick={(event) => openApp(app.id, app.url, event)}
               data-testid={`app-${app.id}`}
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 1, scale: 1 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ 
-                delay: index * 0.05, 
-                duration: 0.3,
+                duration: 0.2,
                 type: "spring",
-                stiffness: 260,
-                damping: 20
+                stiffness: 300,
+                damping: 25
               }}
               whileTap={{ scale: 0.95 }}
-              whileHover={{ scale: 1.05, y: -4 }}
+              whileHover={{ scale: 1.05, y: -6 }}
             >
-              <div className={`w-16 h-16 ${app.color} rounded-xl flex items-center justify-center ios-shadow-sm`}>
-                <app.icon className="text-white" size={28} />
+              <div className={`w-16 h-16 ${app.color} rounded-2xl flex items-center justify-center shadow-lg shadow-black/30`}>
+                <app.icon className="text-white" size={32} />
               </div>
-              <span className="text-sm font-medium text-card-foreground">{app.name}</span>
+              <span className="text-sm font-semibold text-white">{app.name}</span>
             </motion.div>
           ))}
         </div>
@@ -217,26 +211,26 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
       <AnimatePresence>
         {showSettings && (
           <motion.div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowSettings(false)}
           >
             <motion.div
-              className="glass rounded-3xl p-6 w-96 max-h-[80vh] overflow-y-auto ios-shadow-lg"
+              className="rounded-3xl p-6 w-96 max-h-[80vh] overflow-y-auto bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl shadow-black/50"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold">App Settings</h2>
+                <h2 className="text-xl font-semibold text-white">App Settings</h2>
                 <button
                   onClick={() => setShowSettings(false)}
-                  className="w-8 h-8 rounded-full glass flex items-center justify-center hover:bg-white/10"
+                  className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 border border-white/20"
                 >
-                  <X size={18} />
+                  <X size={18} className="text-white" />
                 </button>
               </div>
               
@@ -244,24 +238,24 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
                 {apps.map((app) => (
                   <motion.div
                     key={app.id}
-                    className="glass rounded-xl p-3 flex items-center justify-between hover:bg-white/10 cursor-pointer"
+                    className="bg-white/10 rounded-xl p-3 flex items-center justify-between hover:bg-white/15 cursor-pointer border border-white/10"
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleEditApp(app)}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 ${app.color} rounded-lg flex items-center justify-center`}>
+                      <div className={`w-10 h-10 ${app.color} rounded-lg flex items-center justify-center shadow-md shadow-black/30`}>
                         <app.icon className="text-white" size={20} />
                       </div>
-                      <span className="font-medium">{app.name}</span>
+                      <span className="font-medium text-white">{app.name}</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">Edit</span>
+                    <span className="text-xs text-white/60">Edit</span>
                   </motion.div>
                 ))}
               </div>
               
               <button
                 onClick={handleResetUrls}
-                className="w-full mt-6 glass rounded-xl p-3 text-red-500 hover:bg-red-500/10 font-medium"
+                className="w-full mt-6 bg-red-500/20 rounded-xl p-3 text-red-400 hover:bg-red-500/30 font-medium border border-red-500/30"
               >
                 Reset All URLs
               </button>
@@ -274,7 +268,7 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
       <AnimatePresence>
         {editingApp && (
           <motion.div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -284,33 +278,33 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
             }}
           >
             <motion.div
-              className="glass rounded-3xl p-6 w-96 ios-shadow-lg"
+              className="rounded-3xl p-6 w-96 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl shadow-black/50"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold">Edit {editingApp.name}</h2>
+                <h2 className="text-xl font-semibold text-white">Edit {editingApp.name}</h2>
                 <button
                   onClick={() => {
                     setEditingApp(null);
                     setTempUrl("");
                   }}
-                  className="w-8 h-8 rounded-full glass flex items-center justify-center hover:bg-white/10"
+                  className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 border border-white/20"
                 >
-                  <X size={18} />
+                  <X size={18} className="text-white" />
                 </button>
               </div>
               
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm text-muted-foreground mb-2 block">App URL</label>
+                  <label className="text-sm text-white/70 mb-2 block">App URL</label>
                   <input
                     type="text"
                     value={tempUrl}
                     onChange={(e) => setTempUrl(e.target.value)}
-                    className="w-full glass rounded-xl p-3 bg-white/5 border-none focus:ring-2 focus:ring-primary outline-none"
+                    className="w-full rounded-xl p-3 bg-white/10 border border-white/20 focus:ring-2 focus:ring-primary outline-none text-white placeholder-white/40 backdrop-blur-xl"
                     placeholder="https://example.com"
                   />
                 </div>
@@ -321,13 +315,13 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
                       setEditingApp(null);
                       setTempUrl("");
                     }}
-                    className="flex-1 glass rounded-xl p-3 hover:bg-white/10"
+                    className="flex-1 bg-white/10 rounded-xl p-3 hover:bg-white/15 border border-white/20 text-white"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSaveUrl}
-                    className="flex-1 bg-primary rounded-xl p-3 hover:bg-primary/90 font-medium"
+                    className="flex-1 bg-primary rounded-xl p-3 hover:bg-primary/90 font-medium text-white shadow-lg shadow-primary/30"
                   >
                     Save
                   </button>

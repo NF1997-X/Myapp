@@ -43,20 +43,19 @@ export default function PasswordScreen({ onSuccess }: PasswordScreenProps) {
     return Array.from({ length: 4 }, (_, i) => (
       <motion.div
         key={i}
-        className={`w-4 h-4 rounded-full transition-all ${
+        className={`w-5 h-5 rounded-full ${
           i < currentPassword.length 
-            ? "bg-primary scale-110 ios-shadow-sm" 
-            : "bg-muted/30 border-2 border-muted"
+            ? "bg-primary shadow-lg shadow-primary/50" 
+            : "bg-white/10 backdrop-blur-xl border-2 border-white/30"
         }`}
+        initial={false}
         animate={{
-          scale: i < currentPassword.length ? [1, 1.3, 1.1] : 1,
-          opacity: i < currentPassword.length ? 1 : 0.5
+          scale: i < currentPassword.length ? 1 : 1,
+          opacity: i < currentPassword.length ? 1 : 0.6
         }}
         transition={{ 
-          duration: 0.3,
-          type: "spring",
-          stiffness: 300,
-          damping: 20
+          duration: 0.2,
+          ease: "easeOut"
         }}
       />
     ));
@@ -70,17 +69,17 @@ export default function PasswordScreen({ onSuccess }: PasswordScreenProps) {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center bg-background h-full">
-      <div className="text-center mb-8">
-        <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-primary to-blue-600 rounded-full flex items-center justify-center ios-shadow-lg">
-          <Lock className="text-white" size={32} />
+    <div className="flex flex-col items-center justify-center bg-black h-full">
+      <div className="text-center mb-10">
+        <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-primary via-primary to-blue-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-primary/30">
+          <Lock className="text-white" size={40} />
         </div>
-        <h1 className="text-2xl font-semibold text-foreground mb-2">Enter Passcode</h1>
-        <p className="text-sm text-muted-foreground">Enter your 4-digit passcode to continue</p>
+        <h1 className="text-3xl font-bold text-white mb-3 tracking-tight">Enter Passcode</h1>
+        <p className="text-base text-white/60">Enter your 4-digit passcode to continue</p>
       </div>
 
       {/* Password Dots Display */}
-      <div className="flex space-x-4 mb-12">
+      <div className="flex space-x-5 mb-16">
         {renderPasswordDots()}
       </div>
 
@@ -95,7 +94,7 @@ export default function PasswordScreen({ onSuccess }: PasswordScreenProps) {
             return (
               <motion.button
                 key={index}
-                className="w-20 h-20 rounded-full glass text-foreground text-lg hover:bg-white/10 flex items-center justify-center ios-shadow-sm"
+                className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-xl text-white text-lg hover:bg-white/20 flex items-center justify-center border border-white/20 shadow-lg shadow-black/30"
                 onClick={clearPassword}
                 data-testid="button-delete"
                 whileTap={{ scale: 0.9 }}
@@ -110,7 +109,7 @@ export default function PasswordScreen({ onSuccess }: PasswordScreenProps) {
           return (
             <motion.button
               key={index}
-              className="w-20 h-20 rounded-full glass text-foreground text-xl font-semibold hover:bg-white/10 ios-shadow-sm"
+              className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-xl text-white text-xl font-semibold hover:bg-white/20 border border-white/20 shadow-lg shadow-black/30"
               onClick={() => enterDigit(button.toString())}
               data-testid={`button-digit-${button}`}
               whileTap={{ scale: 0.9 }}
@@ -128,7 +127,7 @@ export default function PasswordScreen({ onSuccess }: PasswordScreenProps) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          className="text-sm text-destructive"
+          className="text-sm text-red-400"
           data-testid="text-error"
         >
           Incorrect passcode. Try again.
