@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Power, Clock, Route, Map, MessageSquare, Video, FolderOpen, Settings, X, LucideIcon, Home, Image } from "lucide-react";
+import { Power, Clock, Route, Map, MessageSquare, Video, FolderOpen, Settings, X, LucideIcon, Home, Image, Download } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface MainDashboardProps {
@@ -98,6 +98,8 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
   const [showChangeUrl, setShowChangeUrl] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showPwaPrompt, setShowPwaPrompt] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [urlEditList, setUrlEditList] = useState<{[key: string]: string}>({});
@@ -122,6 +124,35 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [isZooming]);
+
+  // PWA Installation Prompt
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowPwaPrompt(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallPwa = async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      console.log('User accepted the PWA installation');
+    }
+    
+    setDeferredPrompt(null);
+    setShowPwaPrompt(false);
+  };
 
   const handleSaveUrl = () => {
     if (editingApp && tempUrl) {
@@ -227,6 +258,42 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
       }
       transition={{ duration: 0.4, ease: "easeInOut" }}
     >
+      {/* PWA Install Prompt */}
+      <AnimatePresence>
+        {showPwaPrompt && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            className="px-4 py-3 bg-blue-600/90 backdrop-blur-sm border-b border-blue-500/50"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Download size={20} className="text-white" />
+                <div>
+                  <p className="text-white font-medium text-sm">Install App</p>
+                  <p className="text-blue-100 text-xs">Add to home screen for native experience</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleInstallPwa}
+                  className="px-3 py-1.5 bg-white/20 text-white rounded-lg text-sm font-medium hover:bg-white/30 transition-colors"
+                >
+                  Install
+                </button>
+                <button
+                  onClick={() => setShowPwaPrompt(false)}
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div className="px-4 sm:px-6 py-4 sm:py-6 border-b border-white/10">
         <div className="flex items-center justify-between">
