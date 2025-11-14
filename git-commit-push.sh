@@ -9,20 +9,14 @@ git add .
 
 echo ""
 echo "=== Committing changes ==="
-git commit -m "Complete iOS black glass design with responsive layout and all features
+git commit -m "Database setup and deployment configuration
 
-- Applied full iOS black glass theme across all screens
-- Made entire app responsive (mobile, tablet, iPad, desktop)
-- Added change password functionality with validation
-- Added Home and Gallery app icons
-- Fixed text color issue with !important flag
-- Removed borders from app icons
-- Fixed password dot flickering
-- Fixed icon flickering after loading
-- Removed status bar notification
-- Settings modal with URL editing
-- localStorage persistence for URLs and passwords
-- Vercel deployment configuration"
+- Configured Neon PostgreSQL database connection
+- Set up Drizzle ORM schema synchronization
+- Verified database connection and schema push
+- Prepared application for deployment
+- Updated environment configuration for production
+- Ready for Vercel deployment with database integration"
 
 echo ""
 echo "=== Pushing to origin main ==="

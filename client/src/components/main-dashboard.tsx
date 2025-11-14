@@ -95,9 +95,12 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
   const [editingApp, setEditingApp] = useState<App | null>(null);
   const [tempUrl, setTempUrl] = useState("");
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showChangeUrl, setShowChangeUrl] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [urlEditList, setUrlEditList] = useState<{[key: string]: string}>({});
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -137,6 +140,28 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
     setTempUrl(app.url);
   };
 
+  const handleShowChangeUrl = () => {
+    // Initialize URL edit list with current URLs
+    const currentUrls: {[key: string]: string} = {};
+    apps.forEach(app => {
+      currentUrls[app.id] = app.url;
+    });
+    setUrlEditList(currentUrls);
+    setShowSettings(false);
+    setShowChangeUrl(true);
+  };
+
+  const handleSaveAllUrls = () => {
+    const updatedApps = apps.map(app => ({
+      ...app,
+      url: urlEditList[app.id] || app.url
+    }));
+    setApps(updatedApps);
+    localStorage.setItem("app-urls", JSON.stringify(updatedApps.map(a => ({ id: a.id, url: a.url }))));
+    setShowChangeUrl(false);
+    setUrlEditList({});
+  };
+
   const handleResetUrls = () => {
     setApps(defaultApps);
     localStorage.removeItem("app-urls");
@@ -146,30 +171,37 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
   const handleChangePassword = () => {
     setPasswordError("");
     
+    // Check current password
+    const storedPassword = localStorage.getItem("app-password") || "1234";
+    if (currentPassword !== storedPassword) {
+      setPasswordError("Current password is incorrect");
+      return;
+    }
+    
     if (!newPassword || newPassword.length !== 4) {
-      setPasswordError("Password must be 4 digits");
+      setPasswordError("New password must be 4 digits");
       return;
     }
     
     if (!/^\d{4}$/.test(newPassword)) {
-      setPasswordError("Password must contain only numbers");
+      setPasswordError("New password must contain only numbers");
       return;
     }
     
     if (newPassword !== confirmPassword) {
-      setPasswordError("Passwords do not match");
+      setPasswordError("New passwords do not match");
       return;
     }
-    
+
     localStorage.setItem("app-password", newPassword);
     setShowChangePassword(false);
     setShowSettings(false);
+    setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
+    setPasswordError("");
     alert("Password changed successfully!");
-  };
-
-  const openApp = (appId: string, url: string, event?: React.MouseEvent) => {
+  };  const openApp = (appId: string, url: string, event?: React.MouseEvent) => {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
@@ -279,40 +311,108 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
               </div>
               
               <div className="space-y-3">
+                <button
+                  onClick={handleShowChangeUrl}
+                  className="w-full bg-green-500/20 rounded-xl p-3 text-green-400 hover:bg-green-500/30 font-medium border border-green-500/30 flex items-center justify-center gap-2"
+                >
+                  <Settings size={16} />
+                  Change URLs
+                </button>
+                
+                <button
+                  onClick={() => {
+                    setShowSettings(false);
+                    setShowChangePassword(true);
+                  }}
+                  className="w-full bg-blue-500/20 rounded-xl p-3 text-blue-400 hover:bg-blue-500/30 font-medium border border-blue-500/30 flex items-center justify-center gap-2"
+                >
+                  <Power size={16} />
+                  Change Password
+                </button>
+                
+                <button
+                  onClick={handleResetUrls}
+                  className="w-full bg-red-500/20 rounded-xl p-3 text-red-400 hover:bg-red-500/30 font-medium border border-red-500/30 flex items-center justify-center gap-2"
+                >
+                  <X size={16} />
+                  Reset All URLs
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Change URLs Modal */}
+      <AnimatePresence>
+        {showChangeUrl && (
+          <motion.div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => {
+              setShowChangeUrl(false);
+              setUrlEditList({});
+            }}
+          >
+            <motion.div
+              className="rounded-3xl p-4 sm:p-6 w-[90vw] sm:w-[500px] max-h-[80vh] overflow-y-auto bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl shadow-black/50"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <h2 className="text-lg sm:text-xl font-semibold text-white">Change URLs</h2>
+                <button
+                  onClick={() => {
+                    setShowChangeUrl(false);
+                    setUrlEditList({});
+                  }}
+                  className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 border border-white/20"
+                >
+                  <X size={18} className="text-white" />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
                 {apps.map((app) => (
-                  <motion.div
-                    key={app.id}
-                    className="bg-white/10 rounded-xl p-3 flex items-center justify-between hover:bg-white/15 cursor-pointer border border-white/10"
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleEditApp(app)}
-                  >
-                    <div className="flex items-center gap-3">
+                  <div key={app.id} className="bg-white/10 rounded-xl p-4 border border-white/10">
+                    <div className="flex items-center gap-3 mb-3">
                       <div className={`w-10 h-10 ${app.color} rounded-lg flex items-center justify-center shadow-md shadow-black/30`}>
                         <app.icon className="text-white" size={20} />
                       </div>
                       <span className="font-medium text-white">{app.name}</span>
                     </div>
-                    <span className="text-xs text-white/60">Edit</span>
-                  </motion.div>
+                    <input
+                      type="text"
+                      value={urlEditList[app.id] || app.url}
+                      onChange={(e) => setUrlEditList(prev => ({ ...prev, [app.id]: e.target.value }))}
+                      className="w-full rounded-xl p-3 bg-white/10 border border-white/20 focus:ring-2 focus:ring-primary outline-none text-white placeholder-white/40 backdrop-blur-xl text-sm"
+                      placeholder="https://example.com"
+                    />
+                  </div>
                 ))}
               </div>
               
-              <button
-                onClick={() => {
-                  setShowSettings(false);
-                  setShowChangePassword(true);
-                }}
-                className="w-full mt-4 bg-blue-500/20 rounded-xl p-3 text-blue-400 hover:bg-blue-500/30 font-medium border border-blue-500/30"
-              >
-                Change Password
-              </button>
-              
-              <button
-                onClick={handleResetUrls}
-                className="w-full mt-3 bg-red-500/20 rounded-xl p-3 text-red-400 hover:bg-red-500/30 font-medium border border-red-500/30"
-              >
-                Reset All URLs
-              </button>
+              <div className="flex gap-2 mt-6">
+                <button
+                  onClick={() => {
+                    setShowChangeUrl(false);
+                    setUrlEditList({});
+                  }}
+                  className="flex-1 bg-white/10 rounded-xl p-3 hover:bg-white/15 border border-white/20 text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveAllUrls}
+                  className="flex-1 bg-primary rounded-xl p-3 hover:bg-primary/90 font-medium text-white shadow-lg shadow-primary/30"
+                >
+                  Save All URLs
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -396,6 +496,7 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
             exit={{ opacity: 0 }}
             onClick={() => {
               setShowChangePassword(false);
+              setCurrentPassword("");
               setNewPassword("");
               setConfirmPassword("");
               setPasswordError("");
@@ -413,6 +514,7 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
                 <button
                   onClick={() => {
                     setShowChangePassword(false);
+                    setCurrentPassword("");
                     setNewPassword("");
                     setConfirmPassword("");
                     setPasswordError("");
@@ -424,6 +526,21 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
               </div>
               
               <div className="space-y-4">
+                <div>
+                  <label className="text-sm text-white/70 mb-2 block">Current Password</label>
+                  <input
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => {
+                      setCurrentPassword(e.target.value);
+                      setPasswordError("");
+                    }}
+                    maxLength={4}
+                    className="w-full rounded-xl p-3 bg-white/10 border border-white/20 focus:ring-2 focus:ring-primary outline-none text-white placeholder-white/40 backdrop-blur-xl"
+                    placeholder="Enter current password"
+                  />
+                </div>
+                
                 <div>
                   <label className="text-sm text-white/70 mb-2 block">New Password (4 digits)</label>
                   <input
@@ -440,7 +557,7 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
                 </div>
                 
                 <div>
-                  <label className="text-sm text-white/70 mb-2 block">Confirm Password</label>
+                  <label className="text-sm text-white/70 mb-2 block">Confirm New Password</label>
                   <input
                     type="password"
                     value={confirmPassword}
@@ -450,7 +567,7 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
                     }}
                     maxLength={4}
                     className="w-full rounded-xl p-3 bg-white/10 border border-white/20 focus:ring-2 focus:ring-primary outline-none text-white placeholder-white/40 backdrop-blur-xl"
-                    placeholder="Confirm 4 digits"
+                    placeholder="Confirm new password"
                   />
                 </div>
                 
@@ -462,6 +579,7 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
                   <button
                     onClick={() => {
                       setShowChangePassword(false);
+                      setCurrentPassword("");
                       setNewPassword("");
                       setConfirmPassword("");
                       setPasswordError("");
