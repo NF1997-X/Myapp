@@ -20,7 +20,7 @@ export default function Launcher() {
     setAppState("loading");
     setTimeout(() => {
       setAppState("dashboard");
-    }, 2500);
+    }, 2000);
   };
 
   const handleLogout = () => {
@@ -31,14 +31,14 @@ export default function Launcher() {
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden">
-      <AnimatePresence initial={false}>
+      <AnimatePresence mode="wait">
         {appState === "password" && (
           <motion.div
             key="password"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, filter: "blur(10px)" }}
+            animate={{ opacity: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, filter: "blur(10px)" }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
             className="fixed inset-0"
           >
             <PasswordScreen onSuccess={handlePasswordSuccess} />
@@ -48,10 +48,10 @@ export default function Launcher() {
         {appState === "loading" && (
           <motion.div
             key="loading"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, filter: "blur(10px)", scale: 0.95 }}
+            animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+            exit={{ opacity: 0, filter: "blur(10px)", scale: 1.05 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
             className="fixed inset-0"
           >
             <LoadingScreen />
@@ -61,10 +61,10 @@ export default function Launcher() {
         {appState === "dashboard" && (
           <motion.div
             key="dashboard"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            initial={{ opacity: 0, filter: "blur(10px)", scale: 0.95 }}
+            animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+            exit={{ opacity: 0, filter: "blur(10px)" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
             className="fixed inset-0"
           >
             <MainDashboard onLogout={handleLogout} />

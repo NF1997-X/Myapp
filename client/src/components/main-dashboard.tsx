@@ -1,12 +1,20 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Power, Clock, Route, Map, MessageSquare, Video, FolderOpen } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { Power, Clock, Route, Map, MessageSquare, Video, FolderOpen, Settings, X, LucideIcon } from "lucide-react";
+import { useState, useEffect } from "react";
 
 interface MainDashboardProps {
   onLogout: () => void;
 }
 
-const apps = [
+interface App {
+  id: string;
+  name: string;
+  icon: LucideIcon;
+  color: string;
+  url: string;
+}
+
+const defaultApps: App[] = [
   { 
     id: "expired", 
     name: "Expired", 
@@ -54,21 +62,24 @@ const apps = [
 export default function MainDashboard({ onLogout }: MainDashboardProps) {
   const [isZooming, setIsZooming] = useState(false);
   const [isReturning, setIsReturning] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const isDraggingRef = useRef(false);
-  const dragTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [trackX, setTrackX] = useState(0);
-  
-  // Split apps into pages (4 apps per page)
-  const appsPerPage = 4;
-  const totalPages = Math.ceil(apps.length / appsPerPage);
-  const pageWidth = 340; // Optimized width for layout
-  
-  // Split apps into pages
-  const pages = Array.from({ length: totalPages }, (_, pageIndex) =>
-    apps.slice(pageIndex * appsPerPage, (pageIndex + 1) * appsPerPage)
-  );
+  const [showSettings, setShowSettings] = useState(false);
+  const [apps, setApps] = useState<App[]>(() => {
+    const saved = localStorage.getItem("app-urls");
+    if (saved) {
+      try {
+        const savedApps = JSON.parse(saved);
+        return defaultApps.map(defaultApp => {
+          const savedApp = savedApps.find((a: any) => a.id === defaultApp.id);
+          return savedApp ? { ...defaultApp, url: savedApp.url } : defaultApp;
+        });
+      } catch (e) {
+        return defaultApps;
+      }
+    }
+    return defaultApps;
+  });
+  const [editingApp, setEditingApp] = useState<App | null>(null);
+  const [tempUrl, setTempUrl] = useState("");
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -91,71 +102,41 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
     };
   }, [isZooming]);
 
-  // Animate to specific page
-  const animateToPage = (pageIndex: number) => {
-    setCurrentPage(pageIndex);
-    setTrackX(-pageWidth * pageIndex);
+  const handleSaveUrl = () => {
+    if (editingApp && tempUrl) {
+      const updatedApps = apps.map(app => 
+        app.id === editingApp.id ? { ...app, url: tempUrl } : app
+      );
+      setApps(updatedApps);
+      localStorage.setItem("app-urls", JSON.stringify(updatedApps.map(a => ({ id: a.id, url: a.url }))));
+      setEditingApp(null);
+      setTempUrl("");
+    }
   };
 
-  // Handle drag end with velocity-based snapping
-  const handleDragEnd = (event: any, info: any) => {
-    const velocity = info.velocity.x;
-    const distance = info.offset.x;
-    
-    let newPage = currentPage;
-    
-    // Velocity-based snapping
-    if (Math.abs(velocity) > 800) {
-      newPage = velocity > 0 ? Math.max(0, currentPage - 1) : Math.min(totalPages - 1, currentPage + 1);
-    } 
-    // Distance-based snapping
-    else if (Math.abs(distance) > pageWidth / 4) {
-      newPage = distance > 0 ? Math.max(0, currentPage - 1) : Math.min(totalPages - 1, currentPage + 1);
-    }
-    
-    animateToPage(newPage);
-    
-    // Keep isDragging true for a short period to prevent accidental clicks
-    dragTimeoutRef.current = setTimeout(() => {
-      setIsDragging(false);
-      isDraggingRef.current = false;
-    }, 300);
+  const handleEditApp = (app: App) => {
+    setEditingApp(app);
+    setTempUrl(app.url);
   };
 
-  const handleDragStart = () => {
-    setIsDragging(true);
-    isDraggingRef.current = true;
-    
-    // Clear any existing timeout
-    if (dragTimeoutRef.current) {
-      clearTimeout(dragTimeoutRef.current);
-    }
+  const handleResetUrls = () => {
+    setApps(defaultApps);
+    localStorage.removeItem("app-urls");
+    setShowSettings(false);
   };
 
   const openApp = (appId: string, url: string, event?: React.MouseEvent) => {
-    // Always prevent event propagation first
     if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
     
-    // Prevent app launch during drag - check both state and ref
-    if (isDragging || isDraggingRef.current) {
-      return;
-    }
-    
     setIsZooming(true);
     
-    // Add zoom-in animation delay before navigation
     setTimeout(() => {
       window.location.href = url;
     }, 400);
   };
-
-  // Update track position when currentPage changes
-  useEffect(() => {
-    setTrackX(-pageWidth * currentPage);
-  }, [currentPage, pageWidth]);
 
   return (
     <motion.div 
@@ -181,86 +162,181 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
             whileTap={{ scale: 0.95 }}
             whileHover={{ scale: 1.05 }}
           >
-            <Power className="text-muted-foreground" size={16} />
-          </motion.button>
+            <motion.button
+              onClick={() => setShowSettings(true)}
+              className="glass w-10 h-10 rounded-full flex items-center justify-center cursor-pointer"
+              whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.15)" }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <Settings className="text-muted-foreground" size={16} />
+            </motion.button>
+            <motion.button
+              onClick={onLogout}
+              className="glass w-10 h-10 rounded-full flex items-center justify-center cursor-pointer"
+              whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.15)" }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <Power className="text-muted-foreground" size={16} />
+            </motion.button>
         </div>
       </div>
 
-      {/* Horizontal Carousel Track */}
-      <div className="p-6 mt-12 overflow-hidden">
-        <div className="relative" style={{ width: pageWidth, margin: '0 auto' }}>
+      {/* App Grid - 5 columns */}
+      <div className="p-6 mt-12">
+        <div className="grid grid-cols-5 gap-4 max-w-4xl mx-auto">
+          {apps.map((app, index) => (
+            <motion.div
+              key={app.id}
+              className="app-icon rounded-2xl p-4 flex flex-col items-center justify-center gap-3 cursor-pointer text-center"
+              onClick={(event) => openApp(app.id, app.url, event)}
+              data-testid={`app-${app.id}`}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ 
+                delay: index * 0.05, 
+                duration: 0.3,
+                type: "spring",
+                stiffness: 260,
+                damping: 20
+              }}
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.05, y: -4 }}
+            >
+              <div className={`w-16 h-16 ${app.color} rounded-xl flex items-center justify-center ios-shadow-sm`}>
+                <app.icon className="text-white" size={28} />
+              </div>
+              <span className="text-sm font-medium text-card-foreground">{app.name}</span>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Settings Modal */}
+      <AnimatePresence>
+        {showSettings && (
           <motion.div
-            className="flex"
-            style={{ 
-              width: pageWidth * totalPages,
-              touchAction: 'pan-y'
-            }}
-            animate={{ x: trackX }}
-            drag="x"
-            dragConstraints={{
-              left: -(pageWidth * (totalPages - 1)),
-              right: 0
-            }}
-            dragElastic={0.1}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            data-testid="carousel-track"
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowSettings(false)}
           >
-            {pages.map((pageApps, pageIndex) => (
-              <div
-                key={pageIndex}
-                className="grid grid-cols-2 gap-4"
-                style={{ width: pageWidth, flexShrink: 0 }}
-                data-testid={`page-${pageIndex}`}
-              >
-                {pageApps.map((app, appIndex) => (
+            <motion.div
+              className="glass rounded-3xl p-6 w-96 max-h-[80vh] overflow-y-auto ios-shadow-lg"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold">App Settings</h2>
+                <button
+                  onClick={() => setShowSettings(false)}
+                  className="w-8 h-8 rounded-full glass flex items-center justify-center hover:bg-white/10"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              
+              <div className="space-y-3">
+                {apps.map((app) => (
                   <motion.div
                     key={app.id}
-                    className="app-icon rounded-2xl p-4 flex flex-col items-center justify-center gap-3 cursor-pointer text-center"
-                    onClick={(event) => openApp(app.id, app.url, event)}
-                    data-testid={`app-${app.id}`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: (pageIndex * appsPerPage + appIndex) * 0.05, duration: 0.3 }}
-                    whileTap={{ scale: 0.98, y: -2 }}
-                    whileHover={{ y: -4, scale: 1.05 }}
-                    style={{ 
-                      pointerEvents: (isDragging || isDraggingRef.current) ? 'none' : 'auto',
-                      opacity: (isDragging || isDraggingRef.current) ? 0.6 : 1
-                    }}
+                    className="glass rounded-xl p-3 flex items-center justify-between hover:bg-white/10 cursor-pointer"
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleEditApp(app)}
                   >
-                    <div className={`w-16 h-16 ${app.color} rounded-xl flex items-center justify-center`}>
-                      <app.icon className="text-white" size={28} />
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 ${app.color} rounded-lg flex items-center justify-center`}>
+                        <app.icon className="text-white" size={20} />
+                      </div>
+                      <span className="font-medium">{app.name}</span>
                     </div>
-                    <span className="text-sm font-medium text-card-foreground">{app.name}</span>
+                    <span className="text-xs text-muted-foreground">Edit</span>
                   </motion.div>
                 ))}
               </div>
-            ))}
+              
+              <button
+                onClick={handleResetUrls}
+                className="w-full mt-6 glass rounded-xl p-3 text-red-500 hover:bg-red-500/10 font-medium"
+              >
+                Reset All URLs
+              </button>
+            </motion.div>
           </motion.div>
-        </div>
-      </div>
+        )}
+      </AnimatePresence>
 
-      {/* Footer with functional pagination */}
-      {totalPages > 1 && (
-        <div className="absolute bottom-0 left-0 right-0 p-4 text-center">
-          <div className="flex justify-center space-x-2">
-            {Array.from({ length: totalPages }, (_, index) => (
-              <motion.button
-                key={index}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  currentPage === index ? "bg-primary" : "bg-muted"
-                }`}
-                onClick={() => animateToPage(index)}
-                data-testid={`pagination-${index}`}
-                whileTap={{ scale: 1.2 }}
-                whileHover={{ scale: 1.1 }}
-              />
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Edit URL Modal */}
+      <AnimatePresence>
+        {editingApp && (
+          <motion.div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => {
+              setEditingApp(null);
+              setTempUrl("");
+            }}
+          >
+            <motion.div
+              className="glass rounded-3xl p-6 w-96 ios-shadow-lg"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold">Edit {editingApp.name}</h2>
+                <button
+                  onClick={() => {
+                    setEditingApp(null);
+                    setTempUrl("");
+                  }}
+                  className="w-8 h-8 rounded-full glass flex items-center justify-center hover:bg-white/10"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm text-muted-foreground mb-2 block">App URL</label>
+                  <input
+                    type="text"
+                    value={tempUrl}
+                    onChange={(e) => setTempUrl(e.target.value)}
+                    className="w-full glass rounded-xl p-3 bg-white/5 border-none focus:ring-2 focus:ring-primary outline-none"
+                    placeholder="https://example.com"
+                  />
+                </div>
+                
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setEditingApp(null);
+                      setTempUrl("");
+                    }}
+                    className="flex-1 glass rounded-xl p-3 hover:bg-white/10"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveUrl}
+                    className="flex-1 bg-primary rounded-xl p-3 hover:bg-primary/90 font-medium"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

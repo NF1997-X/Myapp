@@ -43,13 +43,21 @@ export default function PasswordScreen({ onSuccess }: PasswordScreenProps) {
     return Array.from({ length: 4 }, (_, i) => (
       <motion.div
         key={i}
-        className={`password-dot w-4 h-4 rounded-full border-2 border-muted ${
-          i < currentPassword.length ? "filled bg-primary" : "bg-transparent"
+        className={`w-4 h-4 rounded-full transition-all ${
+          i < currentPassword.length 
+            ? "bg-primary scale-110 ios-shadow-sm" 
+            : "bg-muted/30 border-2 border-muted"
         }`}
         animate={{
-          scale: i < currentPassword.length ? 1.2 : 1
+          scale: i < currentPassword.length ? [1, 1.3, 1.1] : 1,
+          opacity: i < currentPassword.length ? 1 : 0.5
         }}
-        transition={{ duration: 0.3 }}
+        transition={{ 
+          duration: 0.3,
+          type: "spring",
+          stiffness: 300,
+          damping: 20
+        }}
       />
     ));
   };
@@ -64,36 +72,37 @@ export default function PasswordScreen({ onSuccess }: PasswordScreenProps) {
   return (
     <div className="flex flex-col items-center justify-center bg-background h-full">
       <div className="text-center mb-8">
-        <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center">
-          <Lock className="text-primary-foreground" size={24} />
+        <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-primary to-blue-600 rounded-full flex items-center justify-center ios-shadow-lg">
+          <Lock className="text-white" size={32} />
         </div>
-        <h1 className="text-lg font-medium text-foreground mb-2">Enter Passcode</h1>
+        <h1 className="text-2xl font-semibold text-foreground mb-2">Enter Passcode</h1>
         <p className="text-sm text-muted-foreground">Enter your 4-digit passcode to continue</p>
       </div>
 
       {/* Password Dots Display */}
-      <div className="flex space-x-4 mb-8">
+      <div className="flex space-x-4 mb-12">
         {renderPasswordDots()}
       </div>
 
       {/* Numeric Keypad */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-5 mb-6">
         {numberButtons.flat().map((button, index) => {
           if (button === null) {
-            return <div key={index} className="w-16 h-16" />;
+            return <div key={index} className="w-20 h-20" />;
           }
           
           if (button === "delete") {
             return (
               <motion.button
                 key={index}
-                className="number-btn w-16 h-16 rounded-full bg-card border border-border text-card-foreground text-lg hover:bg-accent flex items-center justify-center"
+                className="w-20 h-20 rounded-full glass text-foreground text-lg hover:bg-white/10 flex items-center justify-center ios-shadow-sm"
                 onClick={clearPassword}
                 data-testid="button-delete"
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.9 }}
                 whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
-                <Delete size={20} />
+                <Delete size={24} />
               </motion.button>
             );
           }
@@ -101,11 +110,12 @@ export default function PasswordScreen({ onSuccess }: PasswordScreenProps) {
           return (
             <motion.button
               key={index}
-              className="number-btn w-16 h-16 rounded-full bg-card border border-border text-card-foreground text-lg font-medium hover:bg-accent"
+              className="w-20 h-20 rounded-full glass text-foreground text-xl font-semibold hover:bg-white/10 ios-shadow-sm"
               onClick={() => enterDigit(button.toString())}
               data-testid={`button-digit-${button}`}
-              whileTap={{ scale: 0.95 }}
+              whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               {button}
             </motion.button>

@@ -3,87 +3,91 @@
 @tailwind utilities;
 
 :root {
-  --background: #f0f0f0;
-  --foreground: #1a1a1a;
-  --card: #fcfcfc;
-  --card-foreground: hsl(0, 0%, 0%);
-  --popover: hsl(45, 25%, 97%);
-  --popover-foreground: hsl(0, 0%, 100%);
-  --primary: #eb1a4e;
+  --background: #f2f2f7;
+  --foreground: #000000;
+  --card: rgba(255, 255, 255, 0.95);
+  --card-foreground: #000000;
+  --popover: rgba(255, 255, 255, 0.98);
+  --popover-foreground: #000000;
+  --primary: #007AFF;
   --primary-foreground: #ffffff;
-  --secondary: #c4c4c4;
-  --secondary-foreground: #1a1a1a;
-  --muted: #e3e3e3;
-  --muted-foreground: #212121;
-  --accent: hsl(0, 0%, 100%);
-  --accent-foreground: hsl(0, 0%, 10.2%);
-  --destructive: hsl(0, 0%, 0%);
+  --secondary: #8E8E93;
+  --secondary-foreground: #000000;
+  --muted: #F2F2F7;
+  --muted-foreground: #8E8E93;
+  --accent: rgba(255, 255, 255, 0.8);
+  --accent-foreground: #000000;
+  --destructive: #FF3B30;
   --destructive-foreground: #ffffff;
-  --border: #e8e8e8;
-  --input: #b5b5b5;
-  --ring: hsl(0, 0%, 41.96%);
-  --chart-1: hsl(203.8863, 88.2845%, 53.1373%);
-  --chart-2: hsl(159.7826, 100%, 36.0784%);
-  --chart-3: hsl(42.0290, 92.8251%, 56.2745%);
-  --chart-4: hsl(147.1429, 78.5047%, 41.9608%);
-  --chart-5: hsl(341.4894, 75.2000%, 50.9804%);
-  --sidebar: hsl(45, 25%, 97%);
-  --sidebar-foreground: hsl(20, 14%, 17%);
-  --sidebar-primary: hsl(9, 75%, 61%);
-  --sidebar-primary-foreground: hsl(0, 0%, 100%);
-  --sidebar-accent: hsl(25, 45%, 80%);
-  --sidebar-accent-foreground: hsl(20, 14%, 17%);
-  --sidebar-border: hsl(45, 15%, 80%);
-  --sidebar-ring: hsl(9, 75%, 61%);
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  --font-serif: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  --font-mono: Menlo, monospace;
-  --radius: 0.8rem;
-  --shadow: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00), 0px 1px 2px -1px hsl(9, 75%, 61% / 0.00);
+  --border: rgba(0, 0, 0, 0.1);
+  --input: rgba(142, 142, 147, 0.12);
+  --ring: #007AFF;
+  --chart-1: #007AFF;
+  --chart-2: #34C759;
+  --chart-3: #FF9500;
+  --chart-4: #5AC8FA;
+  --chart-5: #FF2D55;
+  --sidebar: rgba(255, 255, 255, 0.95);
+  --sidebar-foreground: #000000;
+  --sidebar-primary: #007AFF;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(0, 0, 0, 0.05);
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: rgba(0, 0, 0, 0.1);
+  --sidebar-ring: #007AFF;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, system-ui, sans-serif;
+  --font-serif: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, system-ui, sans-serif;
+  --font-mono: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+  --radius: 1.2rem;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
   --spacing: 0.25rem;
-  --shadow-lg: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00), 0px 4px 6px -1px hsl(9, 75%, 61% / 0.00);
-  --shadow-md: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00), 0px 2px 4px -1px hsl(9, 75%, 61% / 0.00);
-  --shadow-sm: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00), 0px 1px 2px -1px hsl(9, 75%, 61% / 0.00);
-  --shadow-xl: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00), 0px 8px 10px -1px hsl(9, 75%, 61% / 0.00);
-  --shadow-xs: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00);
-  --shadow-2xl: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00);
-  --shadow-2xs: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00);
-  --tracking-normal: 0em;
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.15), 0 8px 16px rgba(0, 0, 0, 0.1);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.2);
+  --shadow-2xs: 0 0.5px 1px rgba(0, 0, 0, 0.03);
+  --tracking-normal: -0.01em;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.5);
 }
 
 .dark {
-  --background: hsl(20, 14%, 4%);
-  --foreground: hsl(45, 25%, 91%);
-  --card: hsl(20, 14%, 8%);
-  --card-foreground: hsl(45, 25%, 85%);
-  --popover: hsl(20, 14%, 4%);
-  --popover-foreground: hsl(45, 25%, 91%);
-  --primary: hsl(9, 75%, 61%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(30, 15%, 52%);
-  --secondary-foreground: hsl(0, 0%, 100%);
-  --muted: hsl(20, 14%, 15%);
-  --muted-foreground: hsl(45, 15%, 46%);
-  --accent: hsl(25, 45%, 20%);
-  --accent-foreground: hsl(45, 25%, 85%);
-  --destructive: hsl(356.3033, 90.5579%, 54.3137%);
-  --destructive-foreground: hsl(0, 0%, 100%);
-  --border: hsl(20, 14%, 15%);
-  --input: hsl(20, 14%, 18%);
-  --ring: hsl(9, 75%, 61%);
-  --chart-1: hsl(203.8863, 88.2845%, 53.1373%);
-  --chart-2: hsl(159.7826, 100%, 36.0784%);
-  --chart-3: hsl(42.0290, 92.8251%, 56.2745%);
-  --chart-4: hsl(147.1429, 78.5047%, 41.9608%);
-  --chart-5: hsl(341.4894, 75.2000%, 50.9804%);
-  --sidebar: hsl(20, 14%, 8%);
-  --sidebar-foreground: hsl(45, 25%, 85%);
-  --sidebar-primary: hsl(9, 75%, 61%);
-  --sidebar-primary-foreground: hsl(0, 0%, 100%);
-  --sidebar-accent: hsl(25, 45%, 20%);
-  --sidebar-accent-foreground: hsl(45, 25%, 85%);
-  --sidebar-border: hsl(20, 14%, 15%);
-  --sidebar-ring: hsl(9, 75%, 61%);
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: rgba(28, 28, 30, 0.95);
+  --card-foreground: #ffffff;
+  --popover: rgba(28, 28, 30, 0.98);
+  --popover-foreground: #ffffff;
+  --primary: #0A84FF;
+  --primary-foreground: #ffffff;
+  --secondary: #8E8E93;
+  --secondary-foreground: #ffffff;
+  --muted: #1C1C1E;
+  --muted-foreground: #8E8E93;
+  --accent: rgba(58, 58, 60, 0.8);
+  --accent-foreground: #ffffff;
+  --destructive: #FF453A;
+  --destructive-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.15);
+  --input: rgba(142, 142, 147, 0.18);
+  --ring: #0A84FF;
+  --chart-1: #0A84FF;
+  --chart-2: #30D158;
+  --chart-3: #FF9F0A;
+  --chart-4: #64D2FF;
+  --chart-5: #FF375F;
+  --sidebar: rgba(28, 28, 30, 0.95);
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #0A84FF;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(255, 255, 255, 0.08);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.15);
+  --sidebar-ring: #0A84FF;
+  --glass-bg: rgba(28, 28, 30, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.2);
 }
 
 @layer base {
@@ -93,21 +97,62 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, system-ui, sans-serif;
+    letter-spacing: var(--tracking-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--muted);
+    border-radius: 10px;
+    transition: background 0.2s;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
   }
 }
 
 @layer utilities {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--glass-border);
+  }
+
+  .ios-shadow-sm {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+
+  .ios-shadow {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  .ios-shadow-lg {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
   .fade-in {
-    animation: fadeIn 0.5s ease-in-out;
+    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .fade-out {
-    animation: fadeOut 0.3s ease-in-out;
+    animation: fadeOut 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .slide-up {
-    animation: slideUp 0.5s ease-out;
+    animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .pulse-ring {
@@ -115,40 +160,45 @@
   }
 
   .rotate-in {
-    animation: rotateIn 0.6s ease-out;
+    animation: rotateIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .app-icon {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
   }
 
   .app-icon:hover {
-    transform: translateY(-4px) scale(1.05);
+    transform: translateY(-6px) scale(1.03);
   }
 
   .app-icon:active {
     transform: translateY(-2px) scale(0.98);
+    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .number-btn {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
   }
 
   .number-btn:hover {
-    transform: scale(1.05);
+    transform: scale(1.08);
   }
 
   .number-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.92);
+    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .password-dot {
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .password-dot.filled {
     background: var(--primary);
-    transform: scale(1.2);
+    transform: scale(1.15);
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.4);
   }
 
   .loading-spinner {
@@ -157,19 +207,27 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { 
+    opacity: 0; 
+  }
+  to { 
+    opacity: 1; 
+  }
 }
 
 @keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from { 
+    opacity: 1; 
+  }
+  to { 
+    opacity: 0; 
+  }
 }
 
 @keyframes slideUp {
   from { 
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(40px);
   }
   to { 
     opacity: 1;
@@ -179,11 +237,14 @@
 
 @keyframes pulseRing {
   0% {
-    transform: scale(0.33);
-    opacity: 1;
+    transform: scale(0.5);
+    opacity: 0.8;
   }
-  80%, 100% {
-    transform: scale(2.33);
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(2.5);
     opacity: 0;
   }
 }
@@ -191,7 +252,7 @@
 @keyframes rotateIn {
   from {
     opacity: 0;
-    transform: rotate(-180deg) scale(0.5);
+    transform: rotate(-180deg) scale(0.3);
   }
   to {
     opacity: 1;
@@ -200,6 +261,10 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from { 
+    transform: rotate(0deg); 
+  }
+  to { 
+    transform: rotate(360deg); 
+  }
 }
