@@ -9,7 +9,7 @@ interface PasswordScreenProps {
 export default function PasswordScreen({ onSuccess }: PasswordScreenProps) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [showError, setShowError] = useState(false);
-  const correctPassword = "1997";
+  const correctPassword = localStorage.getItem("app-password") || "1997";
 
   const enterDigit = (digit: string) => {
     if (currentPassword.length < 4) {
@@ -69,39 +69,39 @@ export default function PasswordScreen({ onSuccess }: PasswordScreenProps) {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center bg-black h-full">
-      <div className="text-center mb-10">
-        <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-primary via-primary to-blue-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-primary/30">
-          <Lock className="text-white" size={40} />
+    <div className="flex flex-col items-center justify-center bg-black h-full px-4">
+      <div className="text-center mb-8 sm:mb-10">
+        <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 sm:mb-6 bg-gradient-to-br from-primary via-primary to-blue-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-primary/30">
+          <Lock className="text-white" size={32} />
         </div>
-        <h1 className="text-3xl font-bold text-white mb-3 tracking-tight">Enter Passcode</h1>
-        <p className="text-base text-white/60">Enter your 4-digit passcode to continue</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 sm:mb-3 tracking-tight">Enter Passcode</h1>
+        <p className="text-sm sm:text-base text-white/60">Enter your 4-digit passcode to continue</p>
       </div>
 
       {/* Password Dots Display */}
-      <div className="flex space-x-5 mb-16">
+      <div className="flex space-x-4 sm:space-x-5 mb-12 sm:mb-16">
         {renderPasswordDots()}
       </div>
 
       {/* Numeric Keypad */}
-      <div className="grid grid-cols-3 gap-5 mb-6">
+      <div className="grid grid-cols-3 gap-3 sm:gap-5 mb-6">
         {numberButtons.flat().map((button, index) => {
           if (button === null) {
-            return <div key={index} className="w-20 h-20" />;
+            return <div key={index} className="w-16 h-16 sm:w-20 sm:h-20" />;
           }
           
           if (button === "delete") {
             return (
               <motion.button
                 key={index}
-                className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-xl text-white text-lg hover:bg-white/20 flex items-center justify-center border border-white/20 shadow-lg shadow-black/30"
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 backdrop-blur-xl text-white text-base sm:text-lg hover:bg-white/20 flex items-center justify-center border border-white/20 shadow-lg shadow-black/30"
                 onClick={clearPassword}
                 data-testid="button-delete"
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
-                <Delete size={24} />
+                <Delete size={20} />
               </motion.button>
             );
           }
@@ -109,7 +109,7 @@ export default function PasswordScreen({ onSuccess }: PasswordScreenProps) {
           return (
             <motion.button
               key={index}
-              className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-xl text-white text-xl font-semibold hover:bg-white/20 border border-white/20 shadow-lg shadow-black/30"
+              className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 backdrop-blur-xl text-white text-lg sm:text-xl font-semibold hover:bg-white/20 border border-white/20 shadow-lg shadow-black/30"
               onClick={() => enterDigit(button.toString())}
               data-testid={`button-digit-${button}`}
               whileTap={{ scale: 0.9 }}

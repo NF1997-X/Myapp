@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Power, Clock, Route, Map, MessageSquare, Video, FolderOpen, Settings, X, LucideIcon } from "lucide-react";
+import { Power, Clock, Route, Map, MessageSquare, Video, FolderOpen, Settings, X, LucideIcon, Home, Image } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface MainDashboardProps {
@@ -56,6 +56,20 @@ const defaultApps: App[] = [
     icon: FolderOpen, 
     color: "bg-chart-5",
     url: "https://file-share-Faizzz7348.replit.app"
+  },
+  { 
+    id: "home", 
+    name: "Home", 
+    icon: Home, 
+    color: "bg-green-500",
+    url: "https://example.com"
+  },
+  { 
+    id: "gallery", 
+    name: "Gallery", 
+    icon: Image, 
+    color: "bg-purple-500",
+    url: "https://example.com/gallery"
   }
 ];
 
@@ -80,6 +94,10 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
   });
   const [editingApp, setEditingApp] = useState<App | null>(null);
   const [tempUrl, setTempUrl] = useState("");
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -125,6 +143,32 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
     setShowSettings(false);
   };
 
+  const handleChangePassword = () => {
+    setPasswordError("");
+    
+    if (!newPassword || newPassword.length !== 4) {
+      setPasswordError("Password must be 4 digits");
+      return;
+    }
+    
+    if (!/^\d{4}$/.test(newPassword)) {
+      setPasswordError("Password must contain only numbers");
+      return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+    
+    localStorage.setItem("app-password", newPassword);
+    setShowChangePassword(false);
+    setShowSettings(false);
+    setNewPassword("");
+    setConfirmPassword("");
+    alert("Password changed successfully!");
+  };
+
   const openApp = (appId: string, url: string, event?: React.MouseEvent) => {
     if (event) {
       event.preventDefault();
@@ -152,9 +196,9 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
       transition={{ duration: 0.4, ease: "easeInOut" }}
     >
       {/* Header */}
-      <div className="px-6 py-6 border-b border-white/10">
+      <div className="px-4 sm:px-6 py-4 sm:py-6 border-b border-white/10">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-white tracking-tight">App Launcher</h1>
+          <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">App Launcher</h1>
           <div className="flex items-center gap-2">
             <motion.button
               onClick={() => setShowSettings(true)}
@@ -178,13 +222,13 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
         </div>
       </div>
 
-      {/* App Grid - 5 columns */}
-      <div className="flex-1 overflow-y-auto px-6 py-10">
-        <div className="grid grid-cols-5 gap-5 max-w-6xl mx-auto">
+      {/* App Grid - Responsive columns */}
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 sm:py-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5 max-w-7xl mx-auto">
           {apps.map((app, index) => (
             <motion.div
               key={app.id}
-              className="rounded-3xl p-5 flex flex-col items-center justify-center gap-3 cursor-pointer text-center bg-white/10 backdrop-blur-xl hover:bg-white/15 transition-colors shadow-lg shadow-black/50"
+              className="rounded-2xl sm:rounded-3xl p-3 sm:p-4 lg:p-5 flex flex-col items-center justify-center gap-2 sm:gap-3 cursor-pointer text-center hover:bg-white/10 transition-colors"
               onClick={(event) => openApp(app.id, app.url, event)}
               data-testid={`app-${app.id}`}
               initial={{ opacity: 1, scale: 1 }}
@@ -198,10 +242,10 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
               whileTap={{ scale: 0.95 }}
               whileHover={{ scale: 1.05, y: -6 }}
             >
-              <div className={`w-16 h-16 ${app.color} rounded-2xl flex items-center justify-center shadow-lg shadow-black/30`}>
-                <app.icon className="text-white" size={32} />
+              <div className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 ${app.color} rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-black/30`}>
+                <app.icon className="text-white" size={24} />
               </div>
-              <span className="text-sm font-semibold text-white">{app.name}</span>
+              <span className="text-xs sm:text-sm font-semibold !text-white line-clamp-2">{app.name}</span>
             </motion.div>
           ))}
         </div>
@@ -218,14 +262,14 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
             onClick={() => setShowSettings(false)}
           >
             <motion.div
-              className="rounded-3xl p-6 w-96 max-h-[80vh] overflow-y-auto bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl shadow-black/50"
+              className="rounded-3xl p-4 sm:p-6 w-[90vw] sm:w-96 max-h-[80vh] overflow-y-auto bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl shadow-black/50"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-white">App Settings</h2>
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <h2 className="text-lg sm:text-xl font-semibold text-white">App Settings</h2>
                 <button
                   onClick={() => setShowSettings(false)}
                   className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 border border-white/20"
@@ -254,8 +298,18 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
               </div>
               
               <button
+                onClick={() => {
+                  setShowSettings(false);
+                  setShowChangePassword(true);
+                }}
+                className="w-full mt-4 bg-blue-500/20 rounded-xl p-3 text-blue-400 hover:bg-blue-500/30 font-medium border border-blue-500/30"
+              >
+                Change Password
+              </button>
+              
+              <button
                 onClick={handleResetUrls}
-                className="w-full mt-6 bg-red-500/20 rounded-xl p-3 text-red-400 hover:bg-red-500/30 font-medium border border-red-500/30"
+                className="w-full mt-3 bg-red-500/20 rounded-xl p-3 text-red-400 hover:bg-red-500/30 font-medium border border-red-500/30"
               >
                 Reset All URLs
               </button>
@@ -278,14 +332,14 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
             }}
           >
             <motion.div
-              className="rounded-3xl p-6 w-96 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl shadow-black/50"
+              className="rounded-3xl p-4 sm:p-6 w-[90vw] sm:w-96 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl shadow-black/50"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-white">Edit {editingApp.name}</h2>
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <h2 className="text-lg sm:text-xl font-semibold text-white">Edit {editingApp.name}</h2>
                 <button
                   onClick={() => {
                     setEditingApp(null);
@@ -321,6 +375,103 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
                   </button>
                   <button
                     onClick={handleSaveUrl}
+                    className="flex-1 bg-primary rounded-xl p-3 hover:bg-primary/90 font-medium text-white shadow-lg shadow-primary/30"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Change Password Modal */}
+      <AnimatePresence>
+        {showChangePassword && (
+          <motion.div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => {
+              setShowChangePassword(false);
+              setNewPassword("");
+              setConfirmPassword("");
+              setPasswordError("");
+            }}
+          >
+            <motion.div
+              className="rounded-3xl p-4 sm:p-6 w-[90vw] sm:w-96 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl shadow-black/50"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <h2 className="text-lg sm:text-xl font-semibold text-white">Change Password</h2>
+                <button
+                  onClick={() => {
+                    setShowChangePassword(false);
+                    setNewPassword("");
+                    setConfirmPassword("");
+                    setPasswordError("");
+                  }}
+                  className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 border border-white/20"
+                >
+                  <X size={18} className="text-white" />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm text-white/70 mb-2 block">New Password (4 digits)</label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => {
+                      setNewPassword(e.target.value);
+                      setPasswordError("");
+                    }}
+                    maxLength={4}
+                    className="w-full rounded-xl p-3 bg-white/10 border border-white/20 focus:ring-2 focus:ring-primary outline-none text-white placeholder-white/40 backdrop-blur-xl"
+                    placeholder="Enter 4 digits"
+                  />
+                </div>
+                
+                <div>
+                  <label className="text-sm text-white/70 mb-2 block">Confirm Password</label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      setPasswordError("");
+                    }}
+                    maxLength={4}
+                    className="w-full rounded-xl p-3 bg-white/10 border border-white/20 focus:ring-2 focus:ring-primary outline-none text-white placeholder-white/40 backdrop-blur-xl"
+                    placeholder="Confirm 4 digits"
+                  />
+                </div>
+                
+                {passwordError && (
+                  <p className="text-sm text-red-400">{passwordError}</p>
+                )}
+                
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setShowChangePassword(false);
+                      setNewPassword("");
+                      setConfirmPassword("");
+                      setPasswordError("");
+                    }}
+                    className="flex-1 bg-white/10 rounded-xl p-3 hover:bg-white/15 border border-white/20 text-white"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleChangePassword}
                     className="flex-1 bg-primary rounded-xl p-3 hover:bg-primary/90 font-medium text-white shadow-lg shadow-primary/30"
                   >
                     Save
