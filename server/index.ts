@@ -69,3 +69,6 @@ app.use((req, res, next) => {
     log(`serving on port ${port}`);
   });
 })();
+
+// Export for Vercel serverless deployment
+export default app;
