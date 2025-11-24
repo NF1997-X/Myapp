@@ -323,6 +323,7 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
           
           {/* Settings Icon */}
           <motion.div
+            key="settings-app"
             className="rounded-2xl sm:rounded-3xl p-3 sm:p-4 lg:p-5 flex flex-col items-center justify-center gap-2 sm:gap-3 cursor-pointer text-center hover:bg-white/10 transition-colors"
             onClick={(e) => {
               e.preventDefault();
@@ -340,7 +341,7 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
             whileTap={{ scale: 0.95 }}
             whileHover={{ scale: 1.05, y: -6 }}
           >
-            <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gray-500 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-black/30">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-blue-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-black/30">
               <Settings className="text-white" size={24} />
             </div>
             <span className="text-xs sm:text-sm font-semibold !text-white line-clamp-2">Settings</span>
