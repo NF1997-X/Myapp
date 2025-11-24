@@ -248,7 +248,7 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
 
   return (
     <motion.div 
-      className="h-full bg-black flex flex-col"
+      className="h-full bg-black flex flex-col relative overflow-hidden"
       initial={{ scale: 1, opacity: 1 }}
       animate={
         isZooming 
@@ -259,6 +259,15 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
       }
       transition={{ duration: 0.4, ease: "easeInOut" }}
     >
+      {/* Animated Space Background */}
+      <div className="absolute inset-0 stars-background">
+        <div className="stars"></div>
+        <div className="stars2"></div>
+        <div className="stars3"></div>
+        <div className="meteor"></div>
+        <div className="meteor meteor-delay-1"></div>
+        <div className="meteor meteor-delay-2"></div>
+      </div>
       {/* PWA Install Prompt */}
       <AnimatePresence>
         {showPwaPrompt && (
@@ -295,9 +304,9 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
         )}
       </AnimatePresence>
 
-      {/* App Grid - Responsive columns */}
-      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 sm:py-10 pb-32 flex items-center justify-center">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5 max-w-7xl mx-auto">`
+      {/* App Grid - 4 columns */}
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 sm:py-10 pb-32 flex items-center justify-center relative z-10">
+        <div className="grid grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">`
           {apps.filter(app => !['expired', 'routes', 'mapper'].includes(app.id)).map((app, index) => (
             <motion.div
               key={app.id}

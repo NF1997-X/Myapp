@@ -282,3 +282,112 @@
     padding-bottom: 1rem;
   }
 }
+
+/* Animated Space Background */
+.stars-background {
+  background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+  overflow: hidden;
+}
+
+@keyframes move-stars {
+  from { transform: translateY(0); }
+  to { transform: translateY(-2000px); }
+}
+
+.stars, .stars2, .stars3 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-repeat: repeat;
+}
+
+.stars {
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 60px 70px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 50px 50px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 130px 80px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 90px 10px, #fff, rgba(0,0,0,0));
+  background-size: 200px 200px;
+  animation: move-stars 120s linear infinite;
+}
+
+.stars2 {
+  background-image: 
+    radial-gradient(1px 1px at 40px 60px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 110px 90px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 150px 30px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 70px 120px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 180px 50px, #fff, rgba(0,0,0,0));
+  background-size: 200px 200px;
+  animation: move-stars 180s linear infinite;
+  opacity: 0.7;
+}
+
+.stars3 {
+  background-image: 
+    radial-gradient(1px 1px at 10px 10px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 120px 120px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 160px 70px, #ddd, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 30px 150px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 190px 20px, #fff, rgba(0,0,0,0));
+  background-size: 200px 200px;
+  animation: move-stars 240s linear infinite;
+  opacity: 0.5;
+}
+
+/* Meteor Animation */
+@keyframes meteor {
+  0% {
+    transform: rotate(-45deg) translateX(0);
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(-45deg) translateX(-1000px);
+    opacity: 0;
+  }
+}
+
+.meteor {
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 2px;
+  height: 2px;
+  background: linear-gradient(90deg, #fff, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
+  animation: meteor 3s ease-in-out infinite;
+  opacity: 0;
+}
+
+.meteor::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), transparent);
+}
+
+.meteor-delay-1 {
+  top: 20%;
+  right: 10%;
+  animation-delay: 5s;
+  animation-duration: 2.5s;
+}
+
+.meteor-delay-2 {
+  top: 50%;
+  right: 30%;
+  animation-delay: 8s;
+  animation-duration: 3.5s;
+}
