@@ -268,3 +268,17 @@
     transform: rotate(360deg); 
   }
 }
+
+/* iOS Safe Area Support */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Fallback for non-iOS devices */
+@supports not (padding-bottom: env(safe-area-inset-bottom)) {
+  .pb-safe {
+    padding-bottom: 1rem;
+  }
+}

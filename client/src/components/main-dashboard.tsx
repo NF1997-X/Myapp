@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Power, Clock, Route, Map, MessageSquare, Video, FolderOpen, Settings, X, LucideIcon, Home, Image, Download } from "lucide-react";
 import { useState, useEffect } from "react";
+import BottomNavigation from "./bottom-navigation";
 
 interface MainDashboardProps {
   onLogout: () => void;
@@ -295,9 +296,9 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
       </AnimatePresence>
 
       {/* App Grid - Responsive columns */}
-      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 sm:py-10 flex items-center justify-center">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5 max-w-7xl mx-auto">
-          {apps.map((app, index) => (
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 sm:py-10 pb-32 flex items-center justify-center">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5 max-w-7xl mx-auto">`
+          {apps.filter(app => !['expired', 'routes', 'mapper'].includes(app.id)).map((app, index) => (
             <motion.div
               key={app.id}
               className="rounded-2xl sm:rounded-3xl p-3 sm:p-4 lg:p-5 flex flex-col items-center justify-center gap-2 sm:gap-3 cursor-pointer text-center hover:bg-white/10 transition-colors"
@@ -320,32 +321,6 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
               <span className="text-xs sm:text-sm font-semibold !text-white line-clamp-2">{app.name}</span>
             </motion.div>
           ))}
-          
-          {/* Settings Icon */}
-          <motion.div
-            key="settings-app"
-            className="rounded-2xl sm:rounded-3xl p-3 sm:p-4 lg:p-5 flex flex-col items-center justify-center gap-2 sm:gap-3 cursor-pointer text-center hover:bg-white/10 transition-colors"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setShowSettings(true);
-            }}
-            initial={{ opacity: 1, scale: 1 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ 
-              duration: 0.2,
-              type: "spring",
-              stiffness: 300,
-              damping: 25
-            }}
-            whileTap={{ scale: 0.95 }}
-            whileHover={{ scale: 1.05, y: -6 }}
-          >
-            <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-blue-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-black/30">
-              <Settings className="text-white" size={24} />
-            </div>
-            <span className="text-xs sm:text-sm font-semibold !text-white line-clamp-2">Settings</span>
-          </motion.div>
         </div>
       </div>
 
@@ -677,6 +652,29 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Bottom Navigation */}
+      <BottomNavigation 
+        apps={[
+          apps.find(app => app.id === "expired")!,
+          apps.find(app => app.id === "routes")!,
+          apps.find(app => app.id === "mapper")!,
+          {
+            id: "settings",
+            name: "Settings",
+            icon: Settings,
+            color: "bg-blue-600",
+            url: "#settings"
+          }
+        ]}
+        onAppClick={(appId, url) => {
+          if (appId === "settings") {
+            setShowSettings(true);
+          } else {
+            openApp(appId, url);
+          }
+        }}
+      />
     </motion.div>
   );
 }
