@@ -294,35 +294,8 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
         )}
       </AnimatePresence>
 
-      {/* Header */}
-      <div className="px-4 sm:px-6 py-4 sm:py-6 border-b border-white/10">
-        <div className="flex items-center justify-between">
-          <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">App Launcher</h1>
-          <div className="flex items-center gap-2">
-            <motion.button
-              onClick={() => setShowSettings(true)}
-              className="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer bg-white/10 backdrop-blur-xl border border-white/20"
-              whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.15)" }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            >
-              <Settings className="text-white" size={18} />
-            </motion.button>
-            <motion.button
-              onClick={onLogout}
-              className="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer bg-white/10 backdrop-blur-xl border border-white/20"
-              whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.15)" }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            >
-              <Power className="text-white" size={18} />
-            </motion.button>
-          </div>
-        </div>
-      </div>
-
       {/* App Grid - Responsive columns */}
-      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 sm:py-10">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 sm:py-10 flex items-center justify-center">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5 max-w-7xl mx-auto">
           {apps.map((app, index) => (
             <motion.div
@@ -347,6 +320,31 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
               <span className="text-xs sm:text-sm font-semibold !text-white line-clamp-2">{app.name}</span>
             </motion.div>
           ))}
+          
+          {/* Settings Icon */}
+          <motion.div
+            className="rounded-2xl sm:rounded-3xl p-3 sm:p-4 lg:p-5 flex flex-col items-center justify-center gap-2 sm:gap-3 cursor-pointer text-center hover:bg-white/10 transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowSettings(true);
+            }}
+            initial={{ opacity: 1, scale: 1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ 
+              duration: 0.2,
+              type: "spring",
+              stiffness: 300,
+              damping: 25
+            }}
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.05, y: -6 }}
+          >
+            <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gray-500 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-black/30">
+              <Settings className="text-white" size={24} />
+            </div>
+            <span className="text-xs sm:text-sm font-semibold !text-white line-clamp-2">Settings</span>
+          </motion.div>
         </div>
       </div>
 
@@ -403,6 +401,17 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
                 >
                   <X size={16} />
                   Reset All URLs
+                </button>
+                
+                <button
+                  onClick={() => {
+                    setShowSettings(false);
+                    onLogout();
+                  }}
+                  className="w-full bg-orange-500/20 rounded-xl p-3 text-orange-400 hover:bg-orange-500/30 font-medium border border-orange-500/30 flex items-center justify-center gap-2"
+                >
+                  <Power size={16} />
+                  Logout
                 </button>
               </div>
             </motion.div>
