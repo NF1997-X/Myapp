@@ -725,9 +725,7 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
       {/* Bottom Navigation */}
       <BottomNavigation 
         apps={[
-          apps.find(app => app.id === "expired")!,
-          apps.find(app => app.id === "routes")!,
-          apps.find(app => app.id === "mapper")!,
+          ...apps.filter(app => ['expired', 'routes', 'mapper'].includes(app.id)),
           {
             id: "settings",
             name: "Settings",
