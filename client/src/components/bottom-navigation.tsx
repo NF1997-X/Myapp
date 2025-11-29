@@ -67,7 +67,7 @@ export default function BottomNavigation({
                 <button
                   key={app.id}
                   onClick={() => handleAppClick(app.id, app.url)}
-                  className="relative flex flex-col items-center justify-center py-2 px-3 min-w-[70px] flex-shrink-0 transition-transform active:scale-95"
+                  className="relative flex flex-col items-center justify-center p-2 flex-shrink-0 transition-transform active:scale-95"
                 >
                   {/* Active indicator background */}
                   {isActive && (
@@ -86,7 +86,7 @@ export default function BottomNavigation({
                       y: isActive ? -2 : 0,
                     }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    className="relative z-10 mb-1"
+                    className="relative z-10"
                   >
                     <div 
                       className="w-14 h-14 rounded-[18px] flex items-center justify-center shadow-lg"
@@ -102,20 +102,6 @@ export default function BottomNavigation({
                       />
                     </div>
                   </motion.div>
-                  
-                  {/* Label */}
-                  <motion.span
-                    animate={{
-                      opacity: isActive ? 1 : 0.7,
-                    }}
-                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    className="relative z-10 text-[10px] font-medium truncate w-full text-center text-white"
-                    style={{
-                      fontWeight: isActive ? 600 : 400,
-                    }}
-                  >
-                    {app.name}
-                  </motion.span>
                 </button>
               );
             })}

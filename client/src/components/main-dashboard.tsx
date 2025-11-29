@@ -80,19 +80,36 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [apps, setApps] = useState<App[]>(() => {
     const saved = localStorage.getItem("app-urls");
+    const savedOrder = localStorage.getItem("app-order");
+    let baseApps = defaultApps;
+    
     if (saved) {
       try {
         const savedApps = JSON.parse(saved);
-        return defaultApps.map(defaultApp => {
+        baseApps = defaultApps.map(defaultApp => {
           const savedApp = savedApps.find((a: any) => a.id === defaultApp.id);
           return savedApp ? { ...defaultApp, url: savedApp.url } : defaultApp;
         });
       } catch (e) {
-        return defaultApps;
+        baseApps = defaultApps;
       }
     }
-    return defaultApps;
+    
+    if (savedOrder) {
+      try {
+        const order = JSON.parse(savedOrder);
+        const orderedApps = order
+          .map((id: string) => baseApps.find(app => app.id === id))
+          .filter((app: App | undefined): app is App => app !== undefined);
+        const newApps = baseApps.filter(app => !order.includes(app.id));
+        return [...orderedApps, ...newApps];
+      } catch (e) {
+        return baseApps;
+      }
+    }
+    return baseApps;
   });
+  const [draggedApp, setDraggedApp] = useState<string | null>(null);
   const [editingApp, setEditingApp] = useState<App | null>(null);
   const [tempUrl, setTempUrl] = useState("");
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -233,7 +250,37 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
     setConfirmPassword("");
     setPasswordError("");
     alert("Password changed successfully!");
-  };  const openApp = (appId: string, url: string, event?: React.MouseEvent) => {
+  };
+
+  const handleDragStart = (appId: string) => {
+    setDraggedApp(appId);
+  };
+
+  const handleDragOver = (e: React.DragEvent, targetAppId: string) => {
+    e.preventDefault();
+    if (!draggedApp || draggedApp === targetAppId) return;
+
+    const draggedIndex = apps.findIndex(app => app.id === draggedApp);
+    const targetIndex = apps.findIndex(app => app.id === targetAppId);
+
+    if (draggedIndex === -1 || targetIndex === -1) return;
+
+    const newApps = [...apps];
+    const [removed] = newApps.splice(draggedIndex, 1);
+    newApps.splice(targetIndex, 0, removed);
+
+    setApps(newApps);
+  };
+
+  const handleDragEnd = () => {
+    if (draggedApp) {
+      const order = apps.map(app => app.id);
+      localStorage.setItem("app-order", JSON.stringify(order));
+    }
+    setDraggedApp(null);
+  };
+
+  const openApp = (appId: string, url: string, event?: React.MouseEvent) => {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
@@ -306,15 +353,28 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
 
       {/* App Grid - 4 columns */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 sm:py-10 pb-32 flex items-center justify-center relative z-10">
-        <div className="grid grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">`
+        <div className="grid grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">
           {apps.filter(app => !['expired', 'routes', 'mapper'].includes(app.id)).map((app, index) => (
             <motion.div
               key={app.id}
-              className="rounded-2xl sm:rounded-3xl p-3 sm:p-4 lg:p-5 flex flex-col items-center justify-center gap-2 sm:gap-3 cursor-pointer text-center hover:bg-white/10 transition-colors"
-              onClick={(event) => openApp(app.id, app.url, event)}
+              draggable
+              onDragStart={() => handleDragStart(app.id)}
+              onDragOver={(e) => handleDragOver(e, app.id)}
+              onDragEnd={handleDragEnd}
+              className={`rounded-2xl sm:rounded-3xl p-3 sm:p-4 lg:p-5 flex flex-col items-center justify-center gap-2 sm:gap-3 cursor-move text-center hover:bg-white/10 transition-colors ${
+                draggedApp === app.id ? 'opacity-50' : 'opacity-100'
+              }`}
+              onClick={(event) => {
+                if (!draggedApp) {
+                  openApp(app.id, app.url, event);
+                }
+              }}
               data-testid={`app-${app.id}`}
               initial={{ opacity: 1, scale: 1 }}
-              animate={{ opacity: 1, scale: 1 }}
+              animate={{ 
+                opacity: draggedApp === app.id ? 0.5 : 1, 
+                scale: 1 
+              }}
               transition={{ 
                 duration: 0.2,
                 type: "spring",
@@ -337,7 +397,7 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
       <AnimatePresence>
         {showSettings && (
           <motion.div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[100]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -408,7 +468,7 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
       <AnimatePresence>
         {showChangeUrl && (
           <motion.div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[100]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -483,7 +543,7 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
       <AnimatePresence>
         {editingApp && (
           <motion.div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[100]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -551,7 +611,7 @@ export default function MainDashboard({ onLogout }: MainDashboardProps) {
       <AnimatePresence>
         {showChangePassword && (
           <motion.div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[100]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
